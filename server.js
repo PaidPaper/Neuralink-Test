@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const OpenAI = require('openai')
+const path = require('path')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -14,9 +15,8 @@ const openai = new OpenAI({
 // Middleware
 app.use(cors())
 app.use(express.json())
-app.use(express.static('public'))
 
-// Generate article endpoint
+// API Routes
 app.post('/api/generate-article', async (req, res) => {
   try {
     const { topic } = req.body
@@ -48,6 +48,14 @@ app.post('/api/generate-article', async (req, res) => {
     res.status(500).json({ error: 'Failed to generate article' })
   }
 })
+
+// Serve static files from the React app
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')))
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+  })
+}
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
