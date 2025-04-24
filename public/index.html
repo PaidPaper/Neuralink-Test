@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuralInk - AI Article Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .loading {
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+      <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">NeuralInk</h1>
+
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="mb-4">
+          <label for="topic" class="block text-gray-700 text-sm font-bold mb-2">Enter a topic:</label>
+          <input type="text" id="topic"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., Artificial Intelligence, Climate Change, etc.">
+        </div>
+        <button id="generateBtn"
+          class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
+          Generate Article
+        </button>
+      </div>
+
+      <div class="loading bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-center">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <span class="ml-2 text-gray-600">Generating article...</span>
+        </div>
+      </div>
+
+      <div id="result" class="bg-white rounded-lg shadow-md p-6 hidden">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Generated Article</h2>
+        <div id="article" class="prose max-w-none text-gray-700"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+      const topic = document.getElementById('topic').value.trim()
+      const loading = document.querySelector('.loading')
+      const result = document.getElementById('result')
+      const article = document.getElementById('article')
+
+      if (!topic) {
+        alert('Please enter a topic')
+        return
+      }
+
+      loading.classList.add('active')
+      result.classList.add('hidden')
+
+      try {
+        const response = await fetch('/api/generate-article', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ topic }),
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          article.innerHTML = data.article.replace(/\n/g, '<br>')
+          result.classList.remove('hidden')
+        } else {
+          alert(data.error || 'Failed to generate article')
+        }
+      } catch (error) {
+        alert('An error occurred while generating the article')
+        console.error('Error:', error)
+      } finally {
+        loading.classList.remove('active')
+      }
+    });
+  </script>
+</body>
+
+</html>
