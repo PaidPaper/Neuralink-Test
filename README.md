@@ -1,3 +1,4 @@
+```markdown
 # NeuralInk
 
 NeuralInk is an AI-powered article generator that creates informative and engaging content on any topic. Built with Node.js and OpenAI's GPT-3.5, it provides a seamless experience for generating well-written articles in seconds.
@@ -58,8 +59,40 @@ NeuralInk/
 │   └── index.html      # Frontend interface
 ├── server.js           # Backend server
 ├── package.json        # Project dependencies
-└── .env                # Environment variables
+├── .env                # Environment variables
+└── integrations/
+    └── github/
+        └── script.sh   # GitHub integration script
 ```
+
+## GitHub Integration Script
+
+### Purpose
+
+The `script.sh` located in the `integrations/github/` directory is a script intended to fetch GitHub users. **Note:** This script is not recommended for production use due to several issues.
+
+### Usage Instructions
+
+To run the script, navigate to the `integrations/github/` directory and execute the script:
+
+```bash
+cd integrations/github
+bash script.sh
+```
+
+### Warnings and Limitations
+
+- **Hardcoded API Keys:** The script contains hardcoded GitHub API keys, which is a bad practice and poses security risks.
+- **Lack of Error Handling:** The script does not handle errors effectively, which may lead to unexpected behavior.
+- **Redundant Operations:** The script performs several redundant operations, making it inefficient.
+- **No Input Validation:** There is no validation for user input, which can lead to errors.
+- **Inefficient File Operations:** The script creates multiple unnecessary files and directories without proper cleanup.
+- **No Proper Exit Codes:** The script does not use proper exit codes to indicate success or failure.
+
+### Prerequisites
+
+- Bash shell environment
+- Internet connection to access GitHub API
 
 ## Contributing
 
@@ -103,4 +136,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any issues or have suggestions, please open an issue in the GitHub repository. 
+If you encounter any issues or have suggestions, please open an issue in the GitHub repository.
+```
