@@ -1,6 +1,6 @@
 # NeuralInk
 
-NeuralInk is an AI-powered article generator that creates informative and engaging content on any topic. Built with Node.js and OpenAI's GPT-3.5, it provides a seamless experience for generating well-written articles in seconds.
+NeuralInk is an AI-powered article generator that creates informative and engaging content on any topic. Built with Node.js, React, and OpenAI's GPT-3.5, it provides a seamless experience for generating well-written articles in seconds.
 
 ## Features
 
@@ -24,20 +24,27 @@ git clone https://github.com/yourusername/NeuralInk.git
 cd NeuralInk
 ```
 
-2. Install dependencies:
+2. Install server dependencies:
 ```bash
 npm install
 ```
 
-3. Create a `.env` file in the root directory and add your OpenAI API key:
+3. Navigate to the client directory and install client dependencies:
+```bash
+cd client
+npm install
+cd ..
+```
+
+4. Create a `.env` file in the root directory and add your OpenAI API key:
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 PORT=3000
 ```
 
-4. Start the development server:
+5. Start the development server and client application:
 ```bash
-npm run dev
+npm run dev:full
 ```
 
 The application will be available at `http://localhost:3000`.
@@ -54,11 +61,18 @@ The application will be available at `http://localhost:3000`.
 
 ```
 NeuralInk/
-├── public/
-│   └── index.html      # Frontend interface
-├── server.js           # Backend server
-├── package.json        # Project dependencies
-└── .env                # Environment variables
+├── client/
+│   ├── public/
+│   │   └── index.html      # React frontend interface
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── ArticleGenerator.js # React component for article generation
+│   │   ├── App.js          # Main React app component
+│   │   └── index.js        # React entry point
+│   └── package.json        # Client dependencies
+├── server.js               # Backend server
+├── package.json            # Project dependencies
+└── .env                    # Environment variables
 ```
 
 ## Contributing
@@ -99,8 +113,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - OpenAI for their powerful GPT-3.5 API
 - Express.js for the backend framework
+- React for the frontend framework
 - Tailwind CSS for the beautiful UI components
 
 ## Support
 
-If you encounter any issues or have suggestions, please open an issue in the GitHub repository. 
+If you encounter any issues or have suggestions, please open an issue in the GitHub repository.
