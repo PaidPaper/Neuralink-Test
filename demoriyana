@@ -1,0 +1,31 @@
+def calculate_average(numbers):
+    # Missing variable initialization
+    total = sum(numbers)
+    count = len(numbers)
+    return total / count
+
+def process_data(data):
+    # Incorrect function call
+    result = data.sort()  # sort() returns None
+    return result
+
+def main():
+    # Undefined variable
+    numbers = [1, 2, 3, 4, 5]
+    average = calculate_average(numbers)
+    print(f"The average is: {average}")
+    
+    # Type mismatch
+    text = "Hello"
+    number = 42
+    result = text + number  # Can't concatenate string and integer
+    
+    # Incorrect list operation
+    my_list = [1, 2, 3]
+    my_list.append(4, 5)  # append() takes only one argument
+    
+    # Using undefined variable
+    print(undefined_variable)
+
+if __name__ == "__main__":
+    main()
