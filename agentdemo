@@ -1,0 +1,145 @@
+import random
+from datetime import datetime
+from typing import List, Dict, Optional
+import json
+
+class Stock:
+    def __init__(self, symbol: str, price: float):
+        self.symbol = symbol
+        self.price = price
+        self.history = []
+
+    def update_price(self, new_price: float):
+        self.history.append(self.price)
+        self.price = new_price
+
+class Portfolio:
+    def __init__(self, initial_balance: float):
+        self.balance = initial_balance
+        self.holdings: Dict[str, int] = {}
+        self.transactions = []
+
+    def buy(self, stock: Stock, quantity: int) -> bool:
+        total_cost = stock.price * quantity
+        if total_cost > self.balance:
+            return False
+        
+        self.balance -= total_cost
+        self.holdings[stock.symbol] = self.holdings.get(stock.symbol, 0) + quantity
+        self.transactions.append({
+            'type': 'BUY',
+            'symbol': stock.symbol,
+            'quantity': quantity,
+            'price': stock.price,
+            'timestamp': datetime.now()
+        })
+        return True
+
+    def sell(self, stock: Stock, quantity: int) -> bool:
+        if stock.symbol not in self.holdings or self.holdings[stock.symbol] < quantity:
+            return False
+        
+        self.balance += stock.price * quantity
+        self.holdings[stock.symbol] -= quantity
+        self.transactions.append({
+            'type': 'SELL',
+            'symbol': stock.symbol,
+            'quantity': quantity,
+            'price': stock.price,
+            'timestamp': datetime.now()
+        })
+        return True
+
+class TradingSystem:
+    def __init__(self):
+        self.stocks = {}
+        self.portfolio = None
+        self.market_open = False
+
+    def add_stock(self, symbol: str, initial_price: float):
+        self.stocks[symbol] = Stock(symbol, initial_price)
+
+    def start_trading(self, initial_balance: float):
+        self.portfolio = Portfolio(initial_balance)
+        self.market_open = True
+
+    def simulate_market_movement(self):
+        if not self.market_open:
+            raise Exception("Market is closed")
+        
+        for stock in self.stocks.values():
+            # Intentional error: Random price movement might be negative
+            price_change = random.uniform(-0.1, 0.1)
+            new_price = stock.price * (1 + price_change)
+            stock.update_price(new_price)
+
+    def execute_trade(self, symbol: str, quantity: int, is_buy: bool) -> bool:
+        if symbol not in self.stocks:
+            return False
+        
+        stock = self.stocks[symbol]
+        # Intentional error: Missing check for market_open
+        if is_buy:
+            return self.portfolio.buy(stock, quantity)
+        else:
+            return self.portfolio.sell(stock, quantity)
+
+    def get_portfolio_value(self) -> float:
+        if not self.portfolio:
+            return 0.0
+        
+        total_value = self.portfolio.balance
+        for symbol, quantity in self.portfolio.holdings.items():
+            # Intentional error: No error handling for missing stock
+            total_value += self.stocks[symbol].price * quantity
+        return total_value
+
+    def save_portfolio_state(self, filename: str):
+        if not self.portfolio:
+            return
+        
+        state = {
+            'balance': self.portfolio.balance,
+            'holdings': self.portfolio.holdings,
+            'transactions': [
+                {
+                    'type': t['type'],
+                    'symbol': t['symbol'],
+                    'quantity': t['quantity'],
+                    'price': t['price'],
+                    'timestamp': t['timestamp'].isoformat()
+                }
+                for t in self.portfolio.transactions
+            ]
+        }
+        
+        with open(filename, 'w') as f:
+            json.dump(state, f)
+
+def main():
+    # Create and initialize trading system
+    system = TradingSystem()
+    system.add_stock("AAPL", 150.0)
+    system.add_stock("GOOGL", 2800.0)
+    system.add_stock("MSFT", 300.0)
+    
+    # Start trading with initial balance
+    system.start_trading(10000.0)
+    
+    # Simulate some trading
+    for _ in range(5):
+        system.simulate_market_movement()
+        system.execute_trade("AAPL", 2, True)
+        system.execute_trade("GOOGL", 1, True)
+        system.execute_trade("MSFT", 3, True)
+    
+    # Intentional error: Trying to access non-existent stock
+    system.execute_trade("INVALID", 1, True)
+    
+    # Save portfolio state
+    system.save_portfolio_state("portfolio_state.json")
+    
+    print(f"Final portfolio value: ${system.get_portfolio_value():.2f}")
+
+if __name__ == "__main__":
+    main()
