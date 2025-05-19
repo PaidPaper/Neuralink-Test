@@ -50,6 +50,48 @@ The application will be available at `http://localhost:3000`.
 4. Wait for the AI to generate your article
 5. Read and enjoy your generated content!
 
+## New Functions
+
+### `calculate_average`
+
+Calculates the average of a list of numbers.
+
+**Usage:**
+```python
+average = calculate_average([1, 2, 3, 4, 5])
+print(f"The average is: {average}")
+```
+
+**Parameters:**
+- `numbers` (list): A list of numerical values.
+
+**Returns:**
+- The average of the numbers in the list.
+
+### `process_data`
+
+Processes a list of data by sorting it.
+
+**Usage:**
+```python
+sorted_data = process_data([3, 1, 2])
+print(sorted_data)
+```
+
+**Parameters:**
+- `data` (list): A list of data to be sorted.
+
+**Returns:**
+- The sorted list of data.
+
+## Known Issues and Limitations
+
+- **Missing Variable Initialization:** Ensure all variables are initialized before use.
+- **Incorrect Function Call:** The `sort()` method modifies the list in place and returns `None`. Use `sorted(data)` to return a sorted list.
+- **Type Mismatch:** Concatenating a string and an integer will raise a `TypeError`. Convert the integer to a string first.
+- **Incorrect List Operation:** The `append()` method takes only one argument. Use `extend()` to add multiple elements.
+- **Undefined Variable:** Ensure all variables are defined before use to avoid `NameError`.
+
 ## Project Structure
 
 ```
@@ -103,4 +145,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-If you encounter any issues or have suggestions, please open an issue in the GitHub repository. 
+If you encounter any issues or have suggestions, please open an issue in the GitHub repository.
