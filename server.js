@@ -1,51 +1,57 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const OpenAI = require('openai')
+const path = require('path')
+const providers = require('./src/llm/providers')
 
 const app = express()
 const port = process.env.PORT || 3000
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
 
 // Middleware
 app.use(cors())
 app.use(express.json())
 app.use(express.static('public'))
 
+// Get available providers and models
+app.get('/api/providers', (req, res) => {
+  const providerInfo = Object.entries(providers).map(([id, provider]) => ({
+    id,
+    name: provider.name,
+    models: provider.models
+  }))
+  res.json(providerInfo)
+})
+
 // Generate article endpoint
 app.post('/api/generate-article', async (req, res) => {
   try {
-    const { topic } = req.body
+    const { topic, provider: providerId, model } = req.body
 
     if (!topic) {
       return res.status(400).json({ error: 'Topic is required' })
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant that generates short, informative articles."
-        },
-        {
-          role: "user",
-          content: `Write a short, informative article about ${topic}. The article should be between 200-300 words.`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 500
-    })
+    if (!providerId || !providers[providerId]) {
+      return res.status(400).json({ error: 'Invalid provider' })
+    }
 
-    const article = completion.choices[0].message.content
-    res.json({ article })
+    if (!model || !providers[providerId].models.includes(model)) {
+      return res.status(400).json({ error: 'Invalid model for provider' })
+    }
+
+    const provider = providers[providerId]
+    const prompt = `Write a short, informative article about ${topic}. The article should be between 200-300 words.`
+
+    try {
+      const article = await provider.generate(provider.client, model, prompt)
+      res.json({ article, provider: provider.name, model })
+    } catch (error) {
+      console.error(`Error with ${provider.name}:`, error)
+      res.status(500).json({ error: `Failed to generate article using ${provider.name}` })
+    }
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ error: 'Failed to generate article' })
+    res.status(500).json({ error: 'Failed to process request' })
   }
 })
 
